@@ -17,15 +17,15 @@
 
         <ImageView
             android:id="@+id/artist_thumbnail"
-            android:layout_width="50dp"
-            android:layout_height="50dp"/>
+            android:layout_width="@dimen/thumbnail_width"
+            android:layout_height="@dimen/thumbnail_height"/>
 
         <LinearLayout android:id="@+id/center_content"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:gravity="center_vertical"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
+            android:paddingLeft="@dimen/content_padding"
+            android:paddingRight="@dimen/content_padding"
             android:orientation="vertical">
             <TextView
                 android:textSize="@dimen/artist_name"

@@ -17,10 +17,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.mobilplug.spotifystreamer.models.Artist;
-
-import java.util.LinkedList;
-import java.util.List;
-
+import java.util.ArrayList;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
@@ -34,9 +31,10 @@ public class ArtistFragment extends Fragment {
     private EditText search_artist;
     private ListView listView;
     private ArtistAdapter adapter;
-    private List<Artist> artistList = new LinkedList<Artist>();
+    private ArrayList<Artist> artistList = new ArrayList<Artist>();
     private final String ARTIST_ID = "id";
     private final String ARTIST_NAME = "name";
+    private final String ARTIST_LIST = "artistlist";
 
     public ArtistFragment(){
 
@@ -45,7 +43,17 @@ public class ArtistFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState != null && savedInstanceState.containsKey(ARTIST_LIST)) {
+            artistList = savedInstanceState.getParcelableArrayList(ARTIST_LIST);
+        }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(ARTIST_LIST, artistList);
+        super.onSaveInstanceState(outState);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,7 +80,6 @@ public class ArtistFragment extends Fragment {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 artistList.clear();
                 if (!search_artist.getText().toString().isEmpty()) {
-                    //artistList.addAll(Utils.loadArtists(getActivity(), search_artist.getText().toString()));
                     loadArtists(search_artist.getText().toString());
                 }
                 adapter.notifyDataSetChanged();
@@ -106,10 +113,11 @@ public class ArtistFragment extends Fragment {
     public void loadArtists(final String search) {
         if(Utils.checkNetworkState(getActivity()))
             try {
-                new AsyncTask<String, Void, List<Artist>>() {
+
+                new AsyncTask<String, Void, ArrayList<Artist>>() {
 
                     @Override
-                    protected List<Artist> doInBackground(String... strings) {
+                    protected ArrayList<Artist> doInBackground(String... strings) {
 
                         SpotifyApi api = new SpotifyApi();
                         SpotifyService spotify = api.getService();
@@ -117,7 +125,7 @@ public class ArtistFragment extends Fragment {
                         Log.d(LOG_TAG, strings[0]);
                         ArtistsPager artistsPager = spotify.searchArtists(strings[0]+"\n");
                         Log.d(LOG_TAG, "End of search");
-                        List<Artist> results = new LinkedList<Artist>();
+                        ArrayList<Artist> results = new ArrayList<Artist>();
                         for(kaaes.spotify.webapi.android.models.Artist a:artistsPager.artists.items) {
                             results.add(new Artist(a.id, a.name, a.images));
                         }
@@ -126,7 +134,7 @@ public class ArtistFragment extends Fragment {
                     }
 
                     @Override
-                    protected void onPostExecute(List<Artist> results) {
+                    protected void onPostExecute(ArrayList<Artist> results) {
                         super.onPostExecute(results);
                         if(results.isEmpty())
                             Toast.makeText(getActivity(), getString(R.string.no_artist), Toast.LENGTH_SHORT).show();

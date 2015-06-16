@@ -1,8 +1,10 @@
 package com.mobilplug.spotifystreamer;
 
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -38,10 +40,18 @@ public class TrackFragment extends Fragment {
     private final String ARTIST_ID = "id";
     private final String ARTIST_NAME = "name";
     private final String TRACK_LIST = "tracklist";
+    private Parcelable listState;
 
 
     public TrackFragment(){
 
+    }
+
+    @Override
+    public void onPause() {
+        // Save ListView state @ onPause
+        listState = listView.onSaveInstanceState();
+        super.onPause();
     }
 
     @Override
@@ -60,6 +70,15 @@ public class TrackFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(TRACK_LIST, trackList);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if(listState != null) {
+            listView.onRestoreInstanceState(listState);
+        }
     }
 
 
@@ -97,6 +116,16 @@ public class TrackFragment extends Fragment {
         if(Utils.checkNetworkState(getActivity()))
             try {
                 new AsyncTask<String, Void, ArrayList<Track>>() {
+                    private ProgressDialog dialog;
+
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                        dialog = new ProgressDialog(getActivity());
+                        dialog.setIndeterminate(true);
+                        dialog.setMessage(getString(R.string.loading));
+                        dialog.show();
+                    }
 
                     @Override
                     protected ArrayList<Track> doInBackground(String... strings) {
@@ -125,6 +154,7 @@ public class TrackFragment extends Fragment {
                         for(Track t: results)
                         trackList.add(t);
                         adapter.notifyDataSetChanged();
+                        dialog.dismiss();
                     }
 
                 }.execute(id);

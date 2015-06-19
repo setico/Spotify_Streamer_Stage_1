@@ -35,9 +35,8 @@ public class ArtistFragment extends Fragment {
     private ListView listView;
     private ArtistAdapter adapter;
     private ArrayList<Artist> artistList = new ArrayList<Artist>();
-    private final String ARTIST_ID = "id";
-    private final String ARTIST_NAME = "name";
     private final String ARTIST_LIST = "artistlist";
+    private final String ARTIST = "artist";
     private Parcelable listState;
 
     public ArtistFragment(){
@@ -113,8 +112,7 @@ public class ArtistFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Intent i = new Intent(getActivity(), TrackActivity.class);
-                i.putExtra(ARTIST_ID, artistList.get(position).getId());
-                i.putExtra(ARTIST_NAME, artistList.get(position).getName());
+                i.putExtra(ARTIST,artistList.get(position));
                 startActivity(i);
             }
         });

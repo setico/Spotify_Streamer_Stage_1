@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.mobilplug.spotifystreamer.models.Artist;
 import com.mobilplug.spotifystreamer.models.Track;
 
 import java.util.ArrayList;
@@ -37,9 +38,8 @@ public class TrackFragment extends Fragment {
     private ArrayList<Track> trackList = new ArrayList<Track>();
     private String id;
     private String name;
-    private final String ARTIST_ID = "id";
-    private final String ARTIST_NAME = "name";
     private final String TRACK_LIST = "tracklist";
+    private final String ARTIST = "artist";
     private Parcelable listState;
 
 
@@ -57,8 +57,8 @@ public class TrackFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        id = getActivity().getIntent().getStringExtra(ARTIST_ID);
-        name = getActivity().getIntent().getStringExtra(ARTIST_NAME);
+        id = ((Artist)getActivity().getIntent().getParcelableExtra(ARTIST)).getId();
+        name = ((Artist)getActivity().getIntent().getParcelableExtra(ARTIST)).getName();
         if(savedInstanceState != null && savedInstanceState.containsKey(TRACK_LIST)) {
             trackList = savedInstanceState.getParcelableArrayList(TRACK_LIST);
         }else {

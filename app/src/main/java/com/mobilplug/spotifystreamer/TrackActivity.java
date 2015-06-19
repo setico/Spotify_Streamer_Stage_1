@@ -11,8 +11,7 @@ import android.view.MenuItem;
  * Created by setico on 05/06/15.
  */
 public class TrackActivity extends AppCompatActivity{
-    private final String ARTIST_ID = "id";
-    private final String ARTIST_NAME = "name";
+    private final String ARTIST = "artist";
 
 
     @Override
@@ -23,13 +22,8 @@ public class TrackActivity extends AppCompatActivity{
 
         if (savedInstanceState == null) {
             // Create the track fragment and add it to the activity
-            // using a fragment transaction.
-            String id = getIntent().getStringExtra(ARTIST_ID);
-            String name = getIntent().getStringExtra(ARTIST_NAME);
             Bundle arguments = new Bundle();
-            arguments.putString(ARTIST_ID, id);
-            arguments.putString(ARTIST_NAME, name);
-
+            arguments.putParcelable(ARTIST, getIntent().getParcelableExtra(ARTIST));
             TrackFragment fragment = new TrackFragment();
             fragment.setArguments(arguments);
 

@@ -69,6 +69,7 @@ public class TrackAdapter extends BaseAdapter {
         }
         if(track.getAlbumThumbnail(Track.SMALL)!=null)
             Picasso.with(context).load(track.getAlbumThumbnail(Track.SMALL)).into(viewHolder.album_thumbnail);
+
         else
             Picasso.with(context).load(R.drawable.ic_track).into(viewHolder.album_thumbnail);
         viewHolder.album_name.setText(track.getAlbumName());

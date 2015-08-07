@@ -14,6 +14,7 @@ public class TrackActivity extends AppCompatActivity{
     private final String ARTIST = "artist";
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

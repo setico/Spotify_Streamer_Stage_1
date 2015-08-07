@@ -2,6 +2,7 @@ package com.mobilplug.spotifystreamer;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -39,6 +40,7 @@ public class TrackFragment extends Fragment {
     private String id;
     private String name;
     private final String TRACK_LIST = "tracklist";
+    private final String SELECTED_TRACK = "track_position";
     private final String ARTIST = "artist";
     private Parcelable listState;
 
@@ -57,11 +59,14 @@ public class TrackFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        id = ((Artist)getActivity().getIntent().getParcelableExtra(ARTIST)).getId();
-        name = ((Artist)getActivity().getIntent().getParcelableExtra(ARTIST)).getName();
+
         if(savedInstanceState != null && savedInstanceState.containsKey(TRACK_LIST)) {
             trackList = savedInstanceState.getParcelableArrayList(TRACK_LIST);
-        }else {
+            id = ((Artist)savedInstanceState.getParcelable(ARTIST)).getId();
+            name = ((Artist)savedInstanceState.getParcelable(ARTIST)).getName();
+        }else if(!getArguments().isEmpty()){
+            id = ((Artist)getArguments().getParcelable(ARTIST)).getId();
+            name = ((Artist)getArguments().getParcelable(ARTIST)).getName();
             loadTracks(id);
         }
     }
@@ -69,6 +74,7 @@ public class TrackFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(TRACK_LIST, trackList);
+        outState.putParcelable(ARTIST,getArguments().getParcelable(ARTIST));
         super.onSaveInstanceState(outState);
     }
 
@@ -103,6 +109,11 @@ public class TrackFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
+                Intent i = new Intent(getActivity(), PlayerActivity.class);
+                i.putExtra(SELECTED_TRACK,position);
+                i.putExtra(TRACK_LIST,trackList);
+                i.putExtra(ARTIST,name);
+                startActivity(i);
             }
         });
 
@@ -140,7 +151,7 @@ public class TrackFragment extends Fragment {
                         Log.d(LOG_TAG, "End of search");
                         ArrayList<Track> results = new ArrayList<Track>();
                         for (kaaes.spotify.webapi.android.models.Track t : tracks)
-                        results.add(new Track(t.id, t.name, t.album.name, t.album.images));
+                        results.add(new Track(t.id, t.name, t.album.name, t.album.images, t.preview_url, t.uri, t.duration_ms));
                         return results;
 
                     }
